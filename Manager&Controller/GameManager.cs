@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         yield return null; 
 
         Debug.Log("[GameManager] 메인 메뉴 상태로 변경을 시도합니다.");
-        ChangeState(GameState.MainMenu);
+        ChangeState(GameState.Playing);
     }
 
     
