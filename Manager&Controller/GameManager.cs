@@ -71,12 +71,13 @@ public class GameManager : MonoBehaviour
             case GameState.MainMenu:
                 Time.timeScale = 1f;
                 //시작 음악 재생
-                SoundManager.Instance.PlayBGM("Bgm01");
+                SoundManager.Instance.PlayBGMWithFade("BGM01", 3f);
                 break;
 
             case GameState.Playing:
                 Time.timeScale = 1f; // 게임 정상 속도
-                // 예: SoundManager.Instance.PlayBGM("StageBGM");
+                SoundManager.Instance.PlayBGMWithFade("BGM02", 3f);
+                SoundManager.Instance.SetBGMVolume(0.2f);
                 break;
 
             case GameState.Paused:

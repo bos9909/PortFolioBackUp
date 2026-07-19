@@ -50,6 +50,8 @@ public class ObjectPoolManager : MonoBehaviour
         instance.transform.position = position;
         instance.transform.rotation = rotation;
 
+        instance.SetActive(true);
+        
         return instance;
     }
 
@@ -89,8 +91,8 @@ public class ObjectPoolManager : MonoBehaviour
                 instanceToPrefabMap[instance] = prefab;      // 장부에 출신 성분 기록
                 return instance;
             },
-            // 2. 풀에서 꺼낼 때 실행할 규칙
-            (instance) => instance.SetActive(true),
+            // 2. 풀에서 꺼낼 때 실행할 규칙 총알이 휘는 문제 때문에 활성화는 따로 처리
+            (instance) => {},
             // 3. 풀에 반납받을 때 실행할 규칙
             (instance) => instance.SetActive(false),
             // 4. maxPoolSize 제한을 넘어가서 넘쳐나는 오브젝트를 버릴 때 실행할 규칙
