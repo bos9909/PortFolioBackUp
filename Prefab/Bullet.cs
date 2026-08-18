@@ -21,21 +21,25 @@ public class Bullet : MonoBehaviour
         if (rb)
         {
             rb.useGravity = false;
-            rb.isKinematic = true;
+            //rb.isKinematic = true;
         }
     }
 
     // 오브젝트 풀에서 꺼내져서 활성화(SetActive(true))될 때마다 Start 대신 이 함수가 매번 실행됩니다.
     private void OnEnable()
     {
-        
+        //rb.linearVelocity = transform.forward * speed;
     }
 
+  
     private void Update()
     {
         // 1. 코드로 조준된 정면(Forward)을 향해 묵직하게 직진시킵니다. (휘어질 틈이 없습니다)
-        transform.Translate(Vector3.forward * (speed * Time.deltaTime), Space.Self);
+        //transform.Translate(Vector3.forward * (speed * Time.deltaTime), Space.Self);
+        rb.linearVelocity = transform.forward * speed;
     }
+
+    
 
     private void OnTriggerEnter(Collider other)
     {
@@ -47,10 +51,10 @@ public class Bullet : MonoBehaviour
             // 가장 가까운 가상의 충돌 위치와 노말 값을 계산해서 넘겨줍니다.
             Vector3 contactPoint = other.ClosestPoint(transform.position);
             Vector3 contactNormal = (transform.position - contactPoint).normalized;
-
+    
             damageable.TakeDamage(damage, contactPoint, contactNormal);
         }
-
+    
         // 총알 반납
         if (despawnComponent != null) despawnComponent.Despawn();
         else ObjectPoolManager.Instance?.Push(this.gameObject);

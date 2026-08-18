@@ -1,5 +1,9 @@
 using System;
+using MoreMountains.Feedbacks;
 using UnityEngine;
+using static MoreMountains.Feedbacks.MMF_Player;
+using MoreMountains.Tools;
+using Random = System.Random;
 
 public class TargetObject : MonoBehaviour, IDamageable
 {
@@ -9,12 +13,20 @@ public class TargetObject : MonoBehaviour, IDamageable
     
     [Header("Visual & Sound Effects")]
     [SerializeField] private GameObject hitEffectPrefab;
-    [SerializeField] private string hitSoundName = "Enemy_Hit";
-    [SerializeField] private string destroySoundName = "Enemy_Destroy";
 
+    [Header("MMF Settings")] 
+    [SerializeField]private MMF_Player _mmfPlayer;
+
+    [SerializeField] private AudioClip[] myClip;
+    private MMSoundManagerPlayOptions sfxOptions;
+    
     private void OnEnable()
     {
         currentHealth = maxHealth;
+        sfxOptions = MMSoundManagerPlayOptions.Default;
+        sfxOptions.MmSoundManagerTrack = MMSoundManager.MMSoundManagerTracks.Sfx;
+        sfxOptions.Loop = false; 
+        sfxOptions.DoNotAutoRecycleIfNotDonePlaying = true;
     }
 
     public void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
@@ -39,11 +51,11 @@ public class TargetObject : MonoBehaviour, IDamageable
             }
         }
         
-        // 2. 피격 사운드 재생
-        if (SoundManager.Instance != null && !string.IsNullOrEmpty(hitSoundName))
-        {
-            SoundManager.Instance.PlaySFX(hitSoundName);
-        }
+        // 2. 피격 사운드 재생 & 피격 효과 재생
+        // 피격 피드백 되는데 지속시간이 너무 길다
+        _mmfPlayer.PlayFeedbacks();
+        MMSoundManagerSoundPlayEvent.Trigger(myClip.MMRandom(), sfxOptions);
+        
         
         // 3. 체력 소진 시 파괴 처리
         if (currentHealth <= 0)
@@ -57,11 +69,11 @@ public class TargetObject : MonoBehaviour, IDamageable
     {
         Debug.Log($"[{gameObject.name}] 사망/파괴됨!");
 
-        // 사망 사운드 재생
-        if (SoundManager.Instance != null && !string.IsNullOrEmpty(destroySoundName))
-        {
+        // 사망 사운드 재생  mmf로 컨트롤 하자
+       // if (SoundManager.Instance != null && !string.IsNullOrEmpty(destroySoundName))
+       // {
             // SoundManager.Instance.PlaySFX(destroySoundName);
-        }
+       // }
 
         // 오브젝트 풀에서 꺼낸 적이라면 다시 풀로 반납하고, 일반 배치용 장애물이라면 그냥 파괴합니다.
         PooledObjectDespawn despawnComp = GetComponent<PooledObjectDespawn>();
